@@ -69,21 +69,21 @@ python manage.py runserver
 ___
 
 ### Key Requirements and Related Views
-![requirements](Screenshots\Diagram.png)
+![requirements](Screenshots/Diagram.png)
 
 ***
 ### API Views
-![APIs](Screenshots\apis.png)
+![APIs](Screenshots/apis.png)
 
 ### Form Creation And List
-![list](Screenshots\form.png)
+![list](Screenshots/form.png)
 
 ### Questions
-![qn1](Screenshots\question1.png)
-![qn2](Screenshots\question2.png)
+![qn1](Screenshots/question1.png)
+![qn2](Screenshots/question2.png)
 
 ### Responses List
-![res](Screenshots\sub.png)
+![res](Screenshots/sub.png)
 
 ## API Testing
 To run the tests, simply execute the following command:
@@ -116,4 +116,4 @@ pytest
   
 ### Result 
 
-![testapi](Screenshots\test.png)
+![testapi](Screenshots/test.png)
