@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey Analytics</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="analytics-container">
+        <h1>Survey Analytics</h1>
+        
+        <div id="analytics-data"></div>
+    </div>
+
+    <script>
+        const analyticsDataDiv = document.getElementById('analytics-data');
+        const surveyId = 1; // Replace with dynamic survey ID
+
+        // Fetch analytics data for the survey
+        function loadAnalytics() {
+            fetch(`/api/surveys/${surveyId}/analytics/`)
+                .then(response => response.json())
+                .then(data => {
+                    let output = '<h2>Text Responses</h2>';
+                    Object.keys(data).forEach(key => {
+                        const questionData = data[key];
+                        const topWords = questionData.data.top_words;
+
+                        output += `<p>Question: ${questionData.type}</p>`;
+                        output += '<ul>';
+                        topWords.forEach(word => {
+                            output += `<li>${word.word}: ${word.count}</li>`;
+                        });
+                        output += '</ul>';
+                    });
+
+                    analyticsDataDiv.innerHTML = output;
+                });
+        }
+
+        // Load analytics on page load
+        loadAnalytics();
+    </script>
+</body>
+</html>

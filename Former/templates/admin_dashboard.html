@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div id="admin-dashboard">
+        <h1>Admin Dashboard</h1>
+
+        <!-- Form Creation Form -->
+        <h2>Create New Form</h2>
+        <form id="create-form">
+            <label for="form-title">Form Title:</label>
+            <input type="text" id="form-title" name="title" required><br><br>
+
+            <label for="form-description">Description:</label>
+            <textarea id="form-description" name="description" required></textarea><br><br>
+
+            <button type="submit">Create Form</button>
+        </form>
+
+        <h2>Existing Forms</h2>
+        <ul id="form-list"></ul>
+    </div>
+
+    <script>
+        const formTitleInput = document.getElementById('form-title');
+        const formDescriptionInput = document.getElementById('form-description');
+        const formList = document.getElementById('form-list');
+        const createForm = document.getElementById('create-form');
+
+        // Fetch and display existing forms
+        function loadForms() {
+            fetch('/api/forms/')
+                .then(response => response.json())
+                .then(data => {
+                    formList.innerHTML = '';
+                    data.forEach(form => {
+                        const li = document.createElement('li');
+                        li.textContent = `${form.title}: ${form.description}`;
+                        formList.appendChild(li);
+                    });
+                });
+        }
+
+        // Handle form submission for creating a new form
+        createForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = {
+                title: formTitleInput.value,
+                description: formDescriptionInput.value,
+            };
+
+            fetch('/api/forms/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadForms();
+                formTitleInput.value = '';
+                formDescriptionInput.value = '';
+            });
+        });
+
+        // Initial load
+        loadForms();
+    </script>
+</body>
+</html>

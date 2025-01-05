@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fill Out Form</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="form-container">
+        <h1>Fill Out Form</h1>
+        
+        <div id="survey-questions"></div>
+
+        <button id="submit-response">Submit</button>
+    </div>
+
+    <script>
+        const surveyQuestionsDiv = document.getElementById('survey-questions');
+        const submitButton = document.getElementById('submit-response');
+
+        const surveyId = 1;  // Replace with dynamic survey ID (this can be fetched dynamically)
+
+        // Fetch the form questions
+        function loadSurvey() {
+            fetch(`/api/surveys/${surveyId}/questions/`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(question => {
+                        const questionDiv = document.createElement('div');
+                        questionDiv.classList.add('question');
+                        
+                        const questionText = document.createElement('p');
+                        questionText.textContent = question.text;
+                        
+                        const options = question.options || [];
+
+                        if (question.question_type === 'text') {
+                            const input = document.createElement('input');
+                            input.type = 'text';
+                            input.name = `question-${question.id}`;
+                            questionDiv.appendChild(questionText);
+                            questionDiv.appendChild(input);
+                        } else if (question.question_type === 'checkbox') {
+                            options.forEach(option => {
+                                const checkbox = document.createElement('input');
+                                checkbox.type = 'checkbox';
+                                checkbox.name = `question-${question.id}`;
+                                checkbox.value = option;
+                                questionDiv.appendChild(checkbox);
+                                questionDiv.appendChild(document.createTextNode(option));
+                            });
+                        }
+                        // Add more question types as needed
+                        surveyQuestionsDiv.appendChild(questionDiv);
+                    });
+                });
+        }
+
+        // Submit responses
+        submitButton.addEventListener('click', () => {
+            const answers = [];
+            const questionElements = document.querySelectorAll('.question');
+            
+            questionElements.forEach(questionDiv => {
+                const questionId = questionDiv.querySelector('input').name.split('-')[1];
+                const response = questionDiv.querySelector('input').value;
+
+                answers.push({
+                    question: questionId,
+                    response: response
+                });
+            });
+
+            fetch(`/api/submissions/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ survey: surveyId, answers: answers }),
+            })
+            .then(response => response.json())
+            .then(data => alert('Response submitted successfully!'))
+            .catch(error => alert('Error submitting response.'));
+        });
+
+        // Load survey on page load
+        loadSurvey();
+    </script>
+</body>
+</html>
